@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Convite 18 Anos - Bruna</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background: linear-gradient(160deg, #f7f2ed 0%, #f3e4e6 50%, #ede6e3 100%);
+            color: #3d3537;
+            font-family: 'Montserrat', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+        .balloons-container {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 998;
+            overflow: hidden;
+        }
+        .balloon {
+            position: absolute;
+            bottom: -100px;
+            width: 38px;
+            height: 46px;
+            border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+            opacity: 0.85;
+            animation: floatUp linear forwards;
+            box-shadow: inset -5px -5px 10px rgba(0,0,0,0.15), 2px 5px 12px rgba(0,0,0,0.1);
+        }
+        .balloon::after {
+            content: '';
+            position: absolute;
+            bottom: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 1px;
+            height: 18px;
+            background: rgba(150, 150, 150, 0.5);
+        }
+        @keyframes floatUp {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0.9; }
+            100% { transform: translateY(-120vh) rotate(12deg); opacity: 0; }
+        }
+        .container {
+            width: 100%;
+            max-width: 440px;
+            padding: 20px 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            z-index: 2;
+        }
+        .invite-card {
+            width: 100%;
+            background: #ffffff;
+            border-radius: 22px;
+            border: 2px solid #d4d4d8;
+            box-shadow: 0 12px 32px rgba(183, 110, 121, 0.18), 0 4px 12px rgba(0,0,0,0.06);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .invite-img-wrapper {
+            width: 100%;
+            padding: 10px;
+        }
+        .invite-img {
+            width: 100%;
+            border-radius: 14px;
+            display: block;
+            border: 1px solid #e4e4e7;
+        }
+        .scroll-indicator {
+            padding: 12px 0 14px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #b83b52;
+            font-size: 0.78rem;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            font-weight: 700;
+            animation: bounce 2s infinite;
+        }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-5px); }
+            60% { transform: translateY(-2px); }
+        }
+        .rsvp-section {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(8px);
+            border-radius: 22px;
+            border: 1.5px solid #e5c3c8;
+            padding: 24px 20px;
+            box-shadow: 0 10px 28px rgba(183, 110, 121, 0.14);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.35rem;
+            text-align: center;
+            color: #a62c43;
+            letter-spacing: 1px;
+            font-weight: 700;
+        }
+        p.subtitle {
+            text-align: center;
+            font-size: 0.85rem;
+            color: #6b5e62;
+            margin-bottom: 4px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        label {
+            font-size: 0.78rem;
+            color: #9e3f52;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 12px 16px;
+            background: #faf6f5;
+            border: 1.5px solid #d8b4ba;
+            border-radius: 12px;
+            color: #3d3537;
+            font-size: 0.95rem;
+            outline: none;
+            transition: all 0.3s;
+        }
+        input[type="text"]:focus {
+            border-color: #b83b52;
+            background: #ffffff;
+            box-shadow: 0 0 10px rgba(184, 59, 82, 0.15);
+        }
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 4px;
+        }
+        .radio-label {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: #faf6f5;
+            border: 1.5px solid #e2d5d7;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #4a3f42;
+        }
+        .radio-label input {
+            accent-color: #b83b52;
+            width: 18px;
+            height: 18px;
+        }
+        .radio-label:hover {
+            border-color: #d896a3;
+            background: #fdf0f2;
+        }
+        .btn-submit {
+            margin-top: 10px;
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #df9aa7 0%, #c45d72 100%);
+            color: #ffffff;
+            border: 1px solid #e6c697;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            box-shadow: 0 6px 18px rgba(196, 93, 114, 0.35);
+            transition: opacity 0.2s, transform 0.1s;
+        }
+        .btn-submit:active { transform: scale(0.98); }
+        .success-box {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            background: #fdf2f4;
+            border: 1.5px solid #df9aa7;
+            border-radius: 16px;
+        }
+        .success-box h3 {
+            color: #a62c43;
+            font-family: 'Cinzel', serif;
+            margin-bottom: 8px;
+            font-size: 1.15rem;
+        }
+        .success-box p {
+            font-size: 0.85rem;
+            color: #4a3f42;
+            line-height: 1.5;
+        }
+        .admin-access {
+            margin-top: 4px;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+        .admin-btn {
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid #c7c7cc;
+            padding: 8px 18px;
+            border-radius: 20px;
+            color: #6e6467;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .admin-btn:hover {
+            color: #a62c43;
+            border-color: #df9aa7;
+            background: #ffffff;
+        }
+        .admin-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(61, 53, 55, 0.75);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .admin-content {
+            background: #ffffff;
+            border: 2px solid #e5c3c8;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 420px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        }
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .admin-header h3 { font-size: 1.1rem; color: #a62c43; font-family: 'Cinzel', serif; }
+        .close-btn { background: none; border: none; color: #6b5e62; font-size: 1.5rem; cursor: pointer; }
+        .guest-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .guest-item {
+            background: #faf6f5;
+            border: 1px solid #e8d8db;
+            padding: 10px 14px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            color: #3d3537;
+        }
+        .badge-yes { color: #2e7d32; font-weight: 700; }
+        .badge-no { color: #c62828; font-weight: 700; }
+        .export-btn {
+            background: #fdf2f4;
+            color: #a62c43;
+            border: 1.5px solid #df9aa7;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            font-weight: 700;
+            text-align: center;
+            letter-spacing: 0.5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="balloons-container" id="balloonsContainer"></div>
+    <div class="container">
+        <div class="invite-card">
+            <div class="invite-img-wrapper">
+                <img src="https://i.ibb.co/Zzm7nDz0/convite.jpg" alt="Convite 18 Anos Bruna" class="invite-img" id="inviteImage" onerror="this.src='https://i.ibb.co/Zzm7nDz0/image.jpg'">
+            </div>
+            <div class="scroll-indicator">
+                <span>↓ Desça para confirmar presença ↓</span>
+            </div>
+        </div>
+        <div class="rsvp-section" id="rsvpSection">
+            <h2>Confirmação de Presença</h2>
+            <p class="subtitle">Preencha abaixo para confirmarmos os preparativos!</p>
+            <form id="rsvpForm" onsubmit="handleRsvp(event)">
+                <div class="form-group">
+                    <label for="guestName">Seu Nome Completo:</label>
+                    <input type="text" id="guestName" required placeholder="Digite seu nome e sobrenome">
+                </div>
+                <div class="form-group" style="margin-top: 12px;">
+                    <label>Sua resposta:</label>
+                    <div class="options-container">
+                        <label class="radio-label">
+                            <input type="radio" name="status" value="Estou confirmado." required>
+                            Estou confirmado. 🥂
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="status" value="Não posso ir">
+                            Não posso ir 🥲
+                        </label>
+                    </div>
+                </div>
+                <button type="submit" class="btn-submit" style="margin-top: 16px;">Enviar Confirmação</button>
+            </form>
+            <div class="success-box" id="successBox">
+                <h3>Resposta Registrada! 💖</h3>
+                <p id="successText"></p>
+                <p style="margin-top: 12px; font-size: 0.8rem; color: #6b5e62;">Data: 02 de Janeiro | 14:30<br>Local: Chácara do Golfinho (endereço mando no dia)<br>Dresscode: <b>TUDO MENOS BRANCO!</b> (cor da aniversariante)</p>
+            </div>
+        </div>
+        <div class="admin-access">
+            <button class="admin-btn" onclick="openAdminModal()">Painel da Anfitriã</button>
+        </div>
+    </div>
+    <div class="admin-modal" id="adminModal">
+        <div class="admin-content">
+            <div class="admin-header">
+                <h3>Painel Exclusivo da Bruna</h3>
+                <button class="close-btn" onclick="closeAdminModal()">&times;</button>
+            </div>
+            <div id="adminAuth">
+                <p style="font-size: 0.85rem; color: #6b5e62; margin-bottom: 10px;">Digite sua senha de acesso:</p>
+                <input type="password" id="adminPassword" placeholder="Digite a senha da anfitriã" style="width:100%; padding:12px; background:#faf6f5; border:1.5px solid #d8b4ba; border-radius:10px; color:#3d3537; margin-bottom:12px; outline:none;">
+                <button onclick="checkAdminPassword()" class="btn-submit" style="padding:10px;">Entrar</button>
+            </div>
+            <div id="adminPanelBody" style="display:none;">
+                <p id="guestStats" style="font-size: 0.9rem; color: #a62c43; margin-bottom: 12px; font-weight: 600;"></p>
+                <div class="guest-list" id="guestListContainer"></div>
+                <button onclick="copyWhatsappList()" class="export-btn" style="margin-top: 16px; width:100%;">Copiar Lista para o WhatsApp</button>
+                <button onclick="clearGuests()" style="background:none; border:none; color:#c62828; font-size:0.75rem; cursor:pointer; margin-top:12px; width:100%; text-align:center;">Limpar Lista</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Função que gera o sonzinho mágico de confirmação sem precisar de arquivo externo
+        function playConfirmationSound(isConfirmed) {
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                const ctx = new AudioContext();
+                
+                // Acorde festivo (Dó5, Mi5, Sol5, Dó6) se confirmar, ou duas notas suaves se não puder ir
+                const notes = isConfirmed ? [523.25, 659.25, 783.99, 1046.50] : [440, 392];
+                
+                notes.forEach((freq, idx) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, ctx.currentTime + idx * 0.11);
+                    
+                    gain.gain.setValueAtTime(0.01, ctx.currentTime + idx * 0.11);
+                    gain.gain.exponentialRampToValueAtTime(0.18, ctx.currentTime + idx * 0.11 + 0.03);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + idx * 0.11 + 0.55);
+                    
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    
+                    osc.start(ctx.currentTime + idx * 0.11);
+                    osc.stop(ctx.currentTime + idx * 0.11 + 0.6);
+                });
+            } catch (err) {
+                console.log('Áudio não suportado neste navegador');
+            }
+        }
+
+        window.addEventListener('load', () => {
+            const colors = ['#f4acb7', '#d8d8dc', '#b83b52', '#e6c697', '#ffffff'];
+            confetti({
+                particleCount: 80,
+                spread: 75,
+                origin: { y: 0.55 },
+                colors: colors
+            });
+
+            const container = document.getElementById('balloonsContainer');
+            const balloonColors = [
+                'radial-gradient(circle at 30% 30%, #ffffff, #c0c0c8)',
+                'radial-gradient(circle at 30% 30%, #ffe5ec, #e598a8)',
+                'radial-gradient(circle at 30% 30%, #fff3e0, #e6c697)',
+                'radial-gradient(circle at 30% 30%, #ffccd5, #c94a63)'
+            ];
+
+            for (let i = 0; i < 14; i++) {
+                setTimeout(() => {
+                    const balloon = document.createElement('div');
+                    balloon.className = 'balloon';
+                    balloon.style.left = Math.random() * 90 + 'vw';
+                    balloon.style.background = balloonColors[Math.floor(Math.random() * balloonColors.length)];
+                    const duration = 5 + Math.random() * 4;
+                    balloon.style.animationDuration = duration + 's';
+                    container.appendChild(balloon);
+
+                    setTimeout(() => balloon.remove(), duration * 1000);
+                }, i * 250);
+            }
+        });
+
+        function handleRsvp(e) {
+            e.preventDefault();
+            const name = document.getElementById('guestName').value.trim();
+            const status = document.querySelector('input[name="status"]:checked').value;
+            if(!name) return;
+
+            const isConfirmed = status.includes('confirmado');
+            playConfirmationSound(isConfirmed);
+
+            let guests = JSON.parse(localStorage.getItem('bruna_guests_18') || '[]');
+            guests.push({ name, status, date: new Date().toLocaleString('pt-BR') });
+            localStorage.setItem('bruna_guests_18', JSON.stringify(guests));
+
+            document.getElementById('rsvpForm').style.display = 'none';
+            const successBox = document.getElementById('successBox');
+            const successText = document.getElementById('successText');
+            successText.innerHTML = `Obrigada, <b>${name}</b>! Sua resposta ("<i>${status}</i>") foi salva com sucesso. Nos vemos na festa! ✨`;
+            successBox.style.display = 'block';
+
+            if (isConfirmed) {
+                confetti({
+                    particleCount: 50,
+                    spread: 60,
+                    origin: { y: 0.7 },
+                    colors: ['#f4acb7', '#d8d8dc', '#b83b52', '#e6c697']
+                });
+            }
+        }
+
+        function openAdminModal() { document.getElementById('adminModal').style.display = 'flex'; }
+        function closeAdminModal() { document.getElementById('adminModal').style.display = 'none'; }
+
+        function checkAdminPassword() {
+            const pwd = document.getElementById('adminPassword').value;
+            if(pwd === '18bruna' || pwd === 'bruna18') {
+                document.getElementById('adminAuth').style.display = 'none';
+                document.getElementById('adminPanelBody').style.display = 'block';
+                loadGuestList();
+            } else {
+                alert('Senha incorreta!');
+            }
+        }
+
+        function loadGuestList() {
+            let guests = JSON.parse(localStorage.getItem('bruna_guests_18') || '[]');
+            const container = document.getElementById('guestListContainer');
+            const stats = document.getElementById('guestStats');
+            const confirmed = guests.filter(g => g.status.includes('confirmado')).length;
+            stats.innerHTML = `Total de respostas: <b>${guests.length}</b> | Confirmados: <b>${confirmed}</b>`;
+            
+            if(guests.length === 0) {
+                container.innerHTML = '<p style="font-size:0.85rem; color:#888; text-align:center; padding:15px;">Nenhuma resposta ainda.</p>';
+                return;
+            }
+            container.innerHTML = guests.map(g => `
+                <div class="guest-item">
+                    <div>
+                        <strong>${g.name}</strong><br>
+                        <span style="font-size:0.7rem; color:#888;">${g.date}</span>
+                    </div>
+                    <span class="${g.status.includes('confirmado') ? 'badge-yes' : 'badge-no'}">${g.status}</span>
+                </div>
+            `).join('');
+        }
+
+        function copyWhatsappList() {
+            let guests = JSON.parse(localStorage.getItem('bruna_guests_18') || '[]');
+            let text = "📋 *Lista de Confirmação - Aniversário 18 Anos da Bruna*\n\n";
+            guests.forEach((g, index) => {
+                text += `${index + 1}. ${g.name} - *${g.status}*\n`;
+            });
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Lista copiada com sucesso para colar no WhatsApp!');
+            });
+        }
+
+        function clearGuests() {
+            if(confirm('Tem certeza que deseja apagar todas as respostas?')) {
+                localStorage.removeItem('bruna_guests_18');
+                loadGuestList();
+            }
+        }
+    </script>
+</body>
+</html>
