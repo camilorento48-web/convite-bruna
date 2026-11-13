@@ -53,13 +53,63 @@
         .container {
             width: 100%;
             max-width: 440px;
-            padding: 20px 16px;
+            padding: 18px 16px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 20px;
+            gap: 18px;
             z-index: 2;
         }
+        .music-bar {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(8px);
+            border: 1.5px solid #e5c3c8;
+            border-radius: 50px;
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 6px 18px rgba(183, 110, 121, 0.12);
+        }
+        .music-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.8rem;
+            color: #6b5e62;
+            font-weight: 600;
+        }
+        .music-disc {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #df9aa7, #a62c43);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+        }
+        .music-disc.playing {
+            animation: spin 4s linear infinite;
+        }
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
+        }
+        .music-btn {
+            background: linear-gradient(135deg, #df9aa7 0%, #c45d72 100%);
+            color: #ffffff;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: transform 0.15s;
+        }
+        .music-btn:active { transform: scale(0.95); }
         .invite-card {
             width: 100%;
             background: #ffffff;
@@ -305,11 +355,21 @@
     </style>
 </head>
 <body>
+    <div id="ytPlayer" style="position:fixed; width:1px; height:1px; opacity:0; pointer-events:none;"></div>
+
     <div class="balloons-container" id="balloonsContainer"></div>
     <div class="container">
+        <div class="music-bar">
+            <div class="music-info">
+                <div class="music-disc" id="musicDisc">♪</div>
+                <span>Young Forever (Cover)</span>
+            </div>
+            <button class="music-btn" id="musicToggleBtn" onclick="toggleMusic()">▶ Tocar Música</button>
+        </div>
+
         <div class="invite-card">
             <div class="invite-img-wrapper">
-                <img src="https://i.ibb.co/Zzm7nDz0/convite.jpg" alt="Convite 18 Anos Bruna" class="invite-img" id="inviteImage" onerror="this.src='https://i.ibb.co/Zzm7nDz0/image.jpg'">
+                <img src="https://i.ibb.co/Zzm7nDz0/convite.jpg" alt="Convite 18 Anos Bruna" class="invite-img" id="inviteImage">
             </div>
             <div class="scroll-indicator">
                 <span>↓ Desça para confirmar presença ↓</span>
@@ -367,14 +427,58 @@
             </div>
         </div>
     </div>
+
+    <script src="https://www.youtube.com/iframe_api"></script>
     <script>
-        // Função que gera o sonzinho mágico de confirmação sem precisar de arquivo externo
+        let player;
+        let isPlaying = false;
+
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('ytPlayer', {
+                height: '1',
+                width: '1',
+                videoId: 'L2-k56E3V_s',
+                playerVars: {
+                    'autoplay': 0,
+                    'controls': 0,
+                    'loop': 1,
+                    'playlist': 'L2-k56E3V_s',
+                    'playsinline': 1
+                },
+                events: {
+                    'onStateChange': onPlayerStateChange
+                }
+            });
+        }
+
+        function onPlayerStateChange(event) {
+            const btn = document.getElementById('musicToggleBtn');
+            const disc = document.getElementById('musicDisc');
+            if (event.data === YT.PlayerState.PLAYING) {
+                isPlaying = true;
+                btn.textContent = '⏸ Pausar';
+                disc.classList.add('playing');
+            } else {
+                isPlaying = false;
+                btn.textContent = '▶ Tocar Música';
+                disc.classList.remove('playing');
+            }
+        }
+
+        function toggleMusic() {
+            if (!player || !player.playVideo) return;
+            if (isPlaying) {
+                player.pauseVideo();
+            } else {
+                player.setVolume(65);
+                player.playVideo();
+            }
+        }
+
         function playConfirmationSound(isConfirmed) {
             try {
                 const AudioContext = window.AudioContext || window.webkitAudioContext;
                 const ctx = new AudioContext();
-                
-                // Acorde festivo (Dó5, Mi5, Sol5, Dó6) se confirmar, ou duas notas suaves se não puder ir
                 const notes = isConfirmed ? [523.25, 659.25, 783.99, 1046.50] : [440, 392];
                 
                 notes.forEach((freq, idx) => {
@@ -395,7 +499,7 @@
                     osc.stop(ctx.currentTime + idx * 0.11 + 0.6);
                 });
             } catch (err) {
-                console.log('Áudio não suportado neste navegador');
+                console.log('Áudio não suportado');
             }
         }
 
